@@ -67,7 +67,7 @@ class GetBibs():
         # 如果搜索到的论文数量超过1，报错
         if len(bottom_list) > 1:
             print_red(fr"论文标题查到不止一篇结果，请检查 【{paper_title}】")
-            save_if_absent(self.title, '不唯一', '', '', '')
+            save_quote_info_if_absent(self.title, '不唯一', '', '', '')
             return
 
         links = (self.browser
@@ -78,7 +78,7 @@ class GetBibs():
         cite_button = links[2]
         if not cite_button.accessible_name.startswith("被引用次数"):
             print_red(fr"论文没有被引用次数，请检查 【{paper_title}】")
-            save_if_absent(self.title, '无引用', '', '','')
+            save_quote_info_if_absent(self.title, '无引用', '', '', '')
             return
         # 点击目标论文的 “被引用次数”按钮
         cite_button.click()
@@ -153,10 +153,10 @@ class GetBibs():
             # 解析引用格式
             result = parse_gb7714_citation(gb774_cit)
             if result:
-                save_if_absent(self.title, gb774_cit, result['title'], result['journal_name'], result['year'])
+                save_quote_info_if_absent(self.title, gb774_cit, result['title'], result['journal_name'], result['year'])
             else:
                 print_red(f"Failed to parse the citation.{gb774_cit}")
-                save_if_absent(self.title, gb774_cit, '', '', '')
+                save_quote_info_if_absent(self.title, gb774_cit, '', '', '')
 
             # 点击关闭引用的x
             WebDriverWait(self.browser, 10).until(
