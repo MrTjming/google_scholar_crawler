@@ -64,7 +64,7 @@ class GetBibs():
 
         # 定位到搜索结果页的底栏
         bottom_list = self.browser.find_elements(By.CSS_SELECTOR, "[class='gs_fl gs_flb']")
-        # todo： 如果搜索到的论文数量超过1，报错
+        # 如果搜索到的论文数量超过1，报错
         if len(bottom_list) > 1:
             print_red(fr"论文标题查到不止一篇结果，请检查 【{paper_title}】")
             save_if_absent(self.title, '不唯一', '', '', '')

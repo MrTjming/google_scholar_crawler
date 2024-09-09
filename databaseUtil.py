@@ -17,6 +17,21 @@ class QuoteInfo(Model):
         database = db  # 使用数据库连接
         table_name = 'quoteInfo' + '20240908'
 
+
+# 论文信息
+class PaperInfo(Model):
+    #论文标题
+    title = CharField(max_length=500)
+    # 引用数量
+    quoteNum = IntegerField()
+    # 快照日期
+    snapshotDate = CharField(max_length=500)
+
+    class Meta:
+        database = db  # 使用数据库连接
+        table_name = 'quoteInfo' + '20240908'
+
+
 # 创建表
 db.connect()
 db.create_tables([QuoteInfo])
