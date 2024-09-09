@@ -1,0 +1,4 @@
+peewee==3.17.6
+selenium==4.24.0
+colorama==0.4.6
+urllib3==2.2.2
