@@ -13,9 +13,9 @@ class QuoteInfo(Model):
     journal= CharField(max_length=500)
     year_month= CharField(max_length=20)
     #期刊类型
-    journalType = CharField(max_length=500)
+    journal_type = CharField(max_length=500)
     # 快照日期
-    snapshotDate = CharField(max_length=500)
+    snapshot_date = CharField(max_length=500)
 
     class Meta:
         database = db  # 使用数据库连接
@@ -43,7 +43,7 @@ db.create_tables([QuoteInfo])
 db.create_tables([PaperInfo])
 
 def save_quote_info_if_absent(title, citationGBT, cited_by_title, journal, year_month,snapshotDate):
-    users = QuoteInfo.select().where((QuoteInfo.title == title) & (QuoteInfo.citationGBT == citationGBT) & (QuoteInfo.snapshotDate==snapshotDate))
+    users = QuoteInfo.select().where((QuoteInfo.title == title) & (QuoteInfo.citationGBT == citationGBT) & (QuoteInfo.snapshot_date == snapshotDate))
     if len(users) == 0:
         QuoteInfo.create(title=title,citationGBT=citationGBT,
                          cited_by_title=cited_by_title,journal=journal, year_month=year_month,snapshotDate=snapshotDate)
