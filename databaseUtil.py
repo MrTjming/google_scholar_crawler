@@ -37,21 +37,24 @@ class PaperInfo(Model):
         database = db  # 使用数据库连接
         table_name = 'paperInfo'
 
-
 # 创建表
 db.connect()
 db.create_tables([QuoteInfo])
 db.create_tables([PaperInfo])
 
-def save_quote_info_if_absent(title, citationGBT, cited_by_title, journal, year_month):
-    users = QuoteInfo.select().where((QuoteInfo.title == title) & (QuoteInfo.citationGBT == citationGBT))
+def save_quote_info_if_absent(title, citationGBT, cited_by_title, journal, year_month,snapshotDate):
+    users = QuoteInfo.select().where((QuoteInfo.title == title) & (QuoteInfo.citationGBT == citationGBT) & (QuoteInfo.snapshotDate==snapshotDate))
     if len(users) == 0:
-        QuoteInfo.create(title=title,citationGBT=citationGBT, cited_by_title=cited_by_title,journal=journal, year_month=year_month)
-
+        QuoteInfo.create(title=title,citationGBT=citationGBT,
+                         cited_by_title=cited_by_title,journal=journal, year_month=year_month,snapshotDate=snapshotDate)
 
 
 def save_paper_info_if_absent(title, quoteNum,status, snapshotDate):
-    papers = PaperInfo.select().where((PaperInfo.title == title) &(PaperInfo.snapshotDate == snapshotDate))
+    papers = PaperInfo.select().where((PaperInfo.title == title) & (PaperInfo.snapshotDate == snapshotDate))
     if len(papers) == 0:
-        PaperInfo.create(title=title,quoteNum=quoteNum,status=status, snapshotDate=snapshotDate)
-
+        PaperInfo.create(title=title, quoteNum=quoteNum, status=status, snapshotDate=snapshotDate)
+    else:
+        paper = papers[0]
+        paper.quoteNum = quoteNum
+        paper.status = status
+        paper.save()

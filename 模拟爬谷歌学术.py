@@ -34,16 +34,15 @@ def parse_gb7714_citation(citation):
         return None
 
 
-
 class GetBibs():
-    def __init__(self, gg_search_url,chrome_driver_path) -> None:
+    def __init__(self, gg_search_url,chrome_driver_path,snapshot_date) -> None:
         # 当前检索的文章标题
         self.title = ''
         # 谷歌学术地址
         self.gg_search_url = gg_search_url
         # 创建 WebDriver 实例
         self.browser = webdriver.Chrome(service=Service(executable_path=chrome_driver_path), options=webdriver.ChromeOptions())
-
+        self.snapshot_date=snapshot_date
 
     def deal_captcha(self):
         # 判断是是否为验证码页
@@ -51,6 +50,12 @@ class GetBibs():
             print_red("检测到验证码，请手动处理完后，再按回车继续")
             input()
 
+    def extract_number(self, text):
+        # 使用正则表达式匹配数字
+        match = re.search(r'\d+', text)
+        if match:
+            return int(match.group())  # 返回数字部分并转换为整数
+        return None
 
     # 进入被引用文献链接
     def get_title_to_google_scholar(self, paper_title):
@@ -67,7 +72,7 @@ class GetBibs():
         # 如果搜索到的论文数量超过1，报错
         if len(bottom_list) > 1:
             print_red(fr"论文标题查到不止一篇结果，请检查 【{paper_title}】")
-            save_quote_info_if_absent(self.title, '不唯一', '', '', '')
+            save_paper_info_if_absent(self.title, 0,"不唯一",self.snapshot_date)
             return
 
         links = (self.browser
@@ -78,8 +83,11 @@ class GetBibs():
         cite_button = links[2]
         if not cite_button.accessible_name.startswith("被引用次数"):
             print_red(fr"论文没有被引用次数，请检查 【{paper_title}】")
-            save_quote_info_if_absent(self.title, '无引用', '', '', '')
+            save_paper_info_if_absent(self.title, 0, "无引用", self.snapshot_date)
             return
+
+        save_paper_info_if_absent(self.title, self.extract_number(cite_button.accessible_name), "正常", self.snapshot_date)
+
         # 点击目标论文的 “被引用次数”按钮
         cite_button.click()
         # 处理验证码
@@ -170,29 +178,30 @@ if __name__ == '__main__':
     # 替换为本机实际 chromedriver 路径
     # chrome_driver_path = "/Users/liuchang/PycharmProjects/LPTHW/chromedriver-mac-arm64/chromedriver"
 
-    chrome_driver_path = r"C:\Users\刘畅\PycharmProjects\google_scholar_crawler\driver\chromedriver-win64\chromedriver.exe"
-    gg_search_url = r'https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0%2C5&inst=1597255436240989024&q='
+    # chrome_driver_path = r"C:\Users\刘畅\PycharmProjects\google_scholar_crawler\driver\chromedriver-win64\chromedriver.exe"
 
+    chrome_driver_path = "/Users/bytedance/Downloads/生成式/字帖/chromedriver-mac-arm64/chromedriver"
+    gg_search_url = r'https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0%2C5&inst=1597255436240989024&q='
+    snapshot_date = '20240909'
     # 创建爬虫对象
-    get_bibs = GetBibs(gg_search_url,chrome_driver_path)
+    get_bibs = GetBibs(gg_search_url,chrome_driver_path,snapshot_date)
 
     # 要爬取的文章标题
     paper_titles = [
                     # 'Multiwavelength high-order optical vortex detection and demultiplexing coding using a metasurface',
-                    'Deep learning spatial phase unwrapping: a comparative review'
+                    # 'Deep learning spatial phase unwrapping: a comparative review'
                     # 'General treatment of dielectric perturbations in optical rings',
                     # 'Orbital angular momentum comb generation from azimuthal binary phases',
                     # 'Deterministic generation of large-scale hyperentanglement in three degrees of freedom',
                     # 'Ultra-broadband and low-loss edge coupler for highly efficient second harmonic generation in thin-film lithium niobate',
                     # 'Light-induced vacuum micromotors based on an antimony telluride microplate',
                     # 'Nanochannels with a 18-nm feature size and ultrahigh aspect ratio on silica through surface assisting material ejection',
-
-
+                    #
                     # 'Recent advances in photonics of three-dimensional Dirac semimetal',
                     # 'Janus vortex beams realized via liquid crystal Pancharatnam–Berry phase elements',
                     # 'Centimeter scale color printing with grayscale lithography',
                     # 'Deep-tissue two-photon microscopy with a frequency-doubled all-fiber mode-locked laser at 937 nm',
-                    ## 'Ultracompact phase plate fabricated by femtosecond laser two-photon polymerization for generation of Mathieu--Gauss beams',
+                    # 'Ultracompact phase plate fabricated by femtosecond laser two-photon polymerization for generation of Mathieu--Gauss beams',
                     # 'Hybrid reconstruction of the physical model with the deep learning that improves structured illumination microscopy',
                     # 'Deep-learning-assisted inverse design of dual-spin/frequency metasurface for quad-channel off-axis vortices multiplexing',
                     # 'Confocal rescan structured illumination microscopy for real-time deep tissue imaging with superresolution',
@@ -254,8 +263,8 @@ if __name__ == '__main__':
                     # 'Efficient reference-less transmission matrix retrieval for a multimode fiber using fast Fourier transform',
                     # 'High-fidelity SIM reconstruction-based super-resolution quantitative FRET imaging',
                     # 'High repetition rate ultrafast laser-structured nickel electrocatalyst for efficient hydrogen evolution reaction',
-                    # ## 'High-speed free-space optical communication using standard fiber communication components without optical amplification',
-                    # ## 'Robust moiré flatbands within a broad band-offset range',
+                    # 'High-speed free-space optical communication using standard fiber communication components without optical amplification',
+                    # 'Robust moiré flatbands within a broad band-offset range',
                     # 'Miniaturized short-wavelength infrared spectrometer for diffuse light applications',
                     # 'Coordination engineering in Nd doped silica glass for improving repetition rate of 920-nm ultrashort-pulse fiber laser',
                     # 'Nonconvex optimization for optimum retrieval of the transmission matrix of a multimode fiber',
@@ -317,7 +326,7 @@ if __name__ == '__main__':
                     # 'Highly sensitive mid-infrared upconversion detection based on external-cavity pump enhancement',
                     # 'Flexible depth-of-focus, depth-invariant resolution photoacoustic microscopy with Airy beam',
                     # 'Silicon thermo-optic phase shifters: a review of configurations and optimization strategies'
-                    ]  # 要爬取的论文，key用于标记，value是论文题目。下面是一些样例
+                    ]
 
     for title in paper_titles:
         print_yellow(f"----------start({title})-------------")
