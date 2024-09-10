@@ -63,13 +63,14 @@ def parse_journal():
 # SET journal_type = (
 #     SELECT indexed_by
 #     FROM journalTypeConfig
-#     WHERE journalTypeConfig.title = quoteInfo20240908.journal
+#     WHERE journalTypeConfig.title = quoteInfo20240908.journal COLLATE NOCASE
 # )
 # WHERE EXISTS (
 #     SELECT 1
 #     FROM journalTypeConfig
-#     WHERE journalTypeConfig.title = quoteInfo20240908.journal
+#     WHERE journalTypeConfig.title = quoteInfo20240908.journal COLLATE NOCASE
 # );
+
 
 if __name__ == '__main__':
     parse_journal()
