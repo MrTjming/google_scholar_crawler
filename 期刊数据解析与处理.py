@@ -58,7 +58,7 @@ def parse_journal():
             quote.year_month = result['year']
             quote.save()
 
-
+## 下面是根据 解析出来的期刊名 精确匹配 进行修改
 # UPDATE quoteInfo20240908
 # SET journal_type = (
 #     SELECT indexed_by
@@ -69,6 +69,22 @@ def parse_journal():
 #     SELECT 1
 #     FROM journalTypeConfig
 #     WHERE journalTypeConfig.title = quoteInfo20240908.journal COLLATE NOCASE
+# );
+
+
+## 下面的是根据 原始的citationGBT 模糊匹配 进行修改
+# UPDATE quoteInfo20240908
+# SET journal_type = (
+#     SELECT indexed_by
+#     FROM journalTypeConfig
+#     WHERE LOWER(quoteInfo20240908.citationGBT) like LOWER('%' ||journalTypeConfig.title ||'%') COLLATE NOCASE
+# )
+# WHERE
+#     journal_type is null
+#     and EXISTS (
+#     SELECT 1
+#     FROM journalTypeConfig
+#     WHERE LOWER(quoteInfo20240908.citationGBT) like LOWER('%' ||journalTypeConfig.title ||'%') COLLATE NOCASE
 # );
 
 
