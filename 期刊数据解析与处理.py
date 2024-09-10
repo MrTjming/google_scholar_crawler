@@ -88,5 +88,12 @@ def parse_journal():
 # );
 
 
+def test_parse_gb7714():
+    str = "Han F, Mu T, Li H, et al. Deep image prior plus sparsity prior: toward single-shot full-Stokes spectropolarimetric imaging with a multiple-order retarder[J]. Advanced Photonics Nexus, 2023, 2(3): 036009-036009."
+    res = parse_gb7714(str)
+    print(res)
+
+
 if __name__ == '__main__':
-    parse_journal()
+    # parse_journal()
+    test_parse_gb7714()
